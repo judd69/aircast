@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AirCast — the Indian AQI, live</title>
+    <meta
+      name="description"
+      content="Live air quality for Indian cities, on the Indian CPCB scale — the AQI you actually see on the news — alongside US and European AQI. CAMS model data via Open-Meteo."
+    />
+    <script type="module" crossorigin src="./assets/index-DZFvpNSJ.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-2d4Py9Ka.css">
+  </head>
+  <body>
+    <header class="nav">
+      <div class="logo">Air<span>Cast</span></div>
+      <div class="nav-meta">
+        Indian AQI (CPCB method) · CAMS model data via
+        <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+        — not an official CPCB station reading
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1>The AQI Indians <em>actually</em> see on the news.</h1>
+      <p>
+        Most dashboards show the <strong>US AQI</strong>. AirCast shows the
+        <strong>Indian AQI</strong> — computed the official CPCB way from
+        trailing 24-hour means — for any city, live, alongside the US and
+        European figures. Delhi hit 605 on 4 November 2026; check your city
+        before you step out.
+      </p>
+    </section>
+
+    <main>
+      <section class="search-card" aria-label="Choose a city">
+        <div class="search-row">
+          <div class="search-box">
+            <input
+              id="search-input"
+              type="search"
+              placeholder="Search a city — e.g. Jaipur, Lucknow, Indore…"
+              autocomplete="off"
+              aria-label="Search a city"
+            />
+            <div id="suggestions" class="suggestions" role="listbox" hidden></div>
+          </div>
+          <button id="geo-btn" class="btn ghost" type="button">Use my location</button>
+        </div>
+        <div class="chips" id="chips" aria-label="Popular cities"></div>
+      </section>
+
+      <div id="banner" class="banner" role="alert" hidden></div>
+
+      <section id="dashboard" class="dashboard" hidden>
+        <div class="city-head">
+          <div>
+            <h2 id="city-name">—</h2>
+            <p id="city-meta" class="muted">—</p>
+          </div>
+          <div class="city-actions">
+            <button id="compare-add" class="btn" type="button">+ Compare</button>
+            <button id="share-btn" class="btn ghost" type="button">Copy share link</button>
+            <button id="refresh-btn" class="btn ghost" type="button">Refresh</button>
+          </div>
+        </div>
+
+        <div class="gauge-wrap">
+          <div class="aqi-big">
+            <div class="aqi-number-row">
+              <span id="aqi-number" class="aqi-number">—</span>
+              <span id="aqi-category" class="category-chip">—</span>
+            </div>
+            <p class="muted">
+              Indian AQI (CPCB method, estimated from CAMS model data) ·
+              driven by <strong id="dominant">—</strong>
+            </p>
+          </div>
+          <div class="gauge" aria-label="AQI scale 0 to 500">
+            <div class="gauge-band" style="left: 0%; width: 10%; background: #22c55e"></div>
+            <div class="gauge-band" style="left: 10%; width: 10%; background: #84cc16"></div>
+            <div class="gauge-band" style="left: 20%; width: 20%; background: #eab308"></div>
+            <div class="gauge-band" style="left: 40%; width: 20%; background: #f97316"></div>
+            <div class="gauge-band" style="left: 60%; width: 20%; background: #ef4444"></div>
+            <div class="gauge-band" style="left: 80%; width: 20%; background: #7f1d1d"></div>
+            <div id="gauge-marker" class="gauge-marker"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>0 · Good</span><span>50</span><span>100</span><span>200</span><span>300</span><span>400</span><span>500 · Severe</span>
+          </div>
+          <div class="alt-aqi">
+            <div class="alt-stat"><span class="alt-label">US AQI</span><strong id="us-aqi">—</strong></div>
+            <div class="alt-stat"><span class="alt-label">European AQI</span><strong id="eu-aqi">—</strong></div>
+            <div class="alt-stat"><span class="alt-label">Updated</span><strong id="updated-at">—</strong></div>
+          </div>
+        </div>
+
+        <section class="advice" aria-label="Health advice">
+          <h3>Should you go out?</h3>
+          <p id="advice-impact" class="advice-impact"></p>
+          <ul class="advice-list">
+            <li><span>🏃 Exercise</span><strong id="advice-exercise"></strong></li>
+            <li><span>😷 Mask</span><strong id="advice-mask"></strong></li>
+            <li><span>🪟 Windows</span><strong id="advice-windows"></strong></li>
+            <li><span>💛 Sensitive groups</span><strong id="advice-sensitive"></strong></li>
+          </ul>
+        </section>
+
+        <section aria-label="Pollutants">
+          <h3 class="section-title">Pollutants</h3>
+          <p class="muted section-note">
+            Current value, with the trailing-mean sub-index the Indian AQI is
+            built from (24h mean for PM2.5, PM10, NO₂, SO₂; 8h mean for O₃, CO).
+          </p>
+          <div id="pollutant-grid" class="pollutant-grid"></div>
+        </section>
+
+        <section aria-label="Last 24 hours">
+          <h3 class="section-title">Last 24 hours — PM2.5</h3>
+          <div id="chart-wrap" class="chart-wrap"></div>
+        </section>
+
+        <section aria-label="5-day forecast">
+          <h3 class="section-title">Next 5 days</h3>
+          <p class="muted section-note">
+            Daily-mean Indian AQI (estimated from each day's mean
+            concentrations) and the worst hour's US AQI that day.
+          </p>
+          <div id="forecast-grid" class="forecast-grid"></div>
+        </section>
+      </section>
+
+      <section id="compare-section" class="compare-section" hidden>
+        <h3 class="section-title">Compare cities</h3>
+        <p class="muted section-note">Up to 3 cities, side by side. Bars scale to the 0–500 Indian AQI range.</p>
+        <div id="compare-strip" class="compare-strip"></div>
+      </section>
+
+      <section id="empty-state" class="empty-state">
+        <p>Pick a city above — or tap a quick chip — to see its live air quality.</p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        AirCast computes the Indian AQI with the official CPCB breakpoint
+        method from CAMS model data served by
+        <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+        (free, no key). This is an estimate, <strong>not</strong> an official
+        CPCB station reading. Source:
+        <a href="https://github.com/judd69/aircast" target="_blank" rel="noopener">github.com/judd69/aircast</a>
+      </p>
+    </footer>
+
+  </body>
+</html>
